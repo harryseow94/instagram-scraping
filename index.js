@@ -49,27 +49,32 @@ exports.deepScrapeTagPage = function(tag) {
         exports.scrapeTag(tag).then(function(tagPage){
             return Promise.map(tagPage.medias, function(media, i, len) {
                 return exports.scrapePostCode(media.shortcode).then(function(postPage){
+                    var likes = 0;
+                    if(tagPage.medias[i].like_count != undefined){
+                        likes = tagPage.medias[i].like_count.count
+                    }
                     tagPage.medias[i] = postPage;
+                    tagPage.medias[i].likes = likes;
                     if (postPage.location != null && postPage.location.has_public_page) {
                         return exports.scrapeLocation(postPage.location.id).then(function(locationPage){
                             tagPage.media[i].location = locationPage;
                         })
                         .catch(function(err) {
-                            console.log("An error occurred calling scrapeLocation inside deepScrapeTagPage" + ":" + err);
+                            //console.log("An error occurred calling scrapeLocation inside deepScrapeTagPage" + ":" + err);
                         });
                     }
                 })
                 .catch(function(err) {
-                    console.log("An error occurred calling scrapePostPage inside deepScrapeTagPage" + ":" + err);
+                    //console.log("An error occurred calling scrapePostPage inside deepScrapeTagPage" + ":" + err);
                 });
             })
             .then(function(){ resolve(tagPage); })
             .catch(function(err) {
-                console.log("An error occurred resolving tagPage inside deepScrapeTagPage" + ":" + err);
+                //console.log("An error occurred resolving tagPage inside deepScrapeTagPage" + ":" + err);
             });
         })
         .catch(function(err) {
-                console.log("An error occurred calling scrapeTagPage inside deepScrapeTagPage" + ":" + err);
+                //console.log("An error occurred calling scrapeTagPage inside deepScrapeTagPage" + ":" + err);
         });        
     });
 };
@@ -174,7 +179,7 @@ var scrape = function(html) {
     }
     catch(e) {
         if (process.env.NODE_ENV != 'production') {
-            console.error('The HTML returned from instagram was not suitable for scraping');
+            //console.error('The HTML returned from instagram was not suitable for scraping');
         }
         return null
     }
