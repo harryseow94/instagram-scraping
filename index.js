@@ -49,12 +49,7 @@ exports.deepScrapeTagPage = function(tag) {
         exports.scrapeTag(tag).then(function(tagPage){
             return Promise.map(tagPage.medias, function(media, i, len) {
                 return exports.scrapePostCode(media.shortcode).then(function(postPage){
-                    var likes = 0;
-                    if(tagPage.medias[i].like_count != undefined){
-                        likes = tagPage.medias[i].like_count.count
-                    }
                     tagPage.medias[i] = postPage;
-                    tagPage.medias[i].likes = likes;
                     if (postPage.location != null && postPage.location.has_public_page) {
                         return exports.scrapeLocation(postPage.location.id).then(function(locationPage){
                             tagPage.media[i].location = locationPage;
